@@ -15,9 +15,9 @@ export default function Home() {
         />
         <ol>
           <li>
-            Get started by editing <code>src/app/page.js</code>.
+            Get started by editing da code in <code>src/app/page.js</code>.
           </li>
-          <li>Save and see your changes instantly.</li>
+          <li>Save da project and see your changes instantly.</li>
         </ol>
 
         <div className={styles.ctas}>
