@@ -1,7 +1,7 @@
 import React from 'react';
 import FooterCSS from './Footer.module.css';
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import {FaGithub, FaLinkedin} from "react-icons/fa";
+import {FaXTwitter} from "react-icons/fa6";
 
 const Footer = () => {
     return (
@@ -9,13 +9,13 @@ const Footer = () => {
             <p style={styles.text}>© 2025 JobQuest AI. All rights reserved.</p>
             <div className={FooterCSS.socialIcons}>
                 <a href="https://github.com/Lada496/stormhacks-2025" target="_blank" rel="noopener noreferrer">
-                    <FaGithub />
+                    <FaGithub/>
                 </a>
                 <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-                    <FaLinkedin />
+                    <FaLinkedin/>
                 </a>
                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                    <FaXTwitter />
+                    <FaXTwitter/>
                 </a>
             </div>
         </footer>
@@ -33,6 +33,8 @@ const styles = {
         borderTop: '5px solid rgb(73, 181, 221)',
         color: '#ffffff',
         minHeight: '20vh',
+        width: '100%',
+        boxSizing: 'border-box',
     },
     text: {
         margin: '10px 0',
