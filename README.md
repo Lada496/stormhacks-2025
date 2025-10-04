@@ -1,3 +1,4 @@
 How to run
-`cd stormhacks-2025-frontend`
+`cd frontend`
+`npm i`
 `npm run dev`
