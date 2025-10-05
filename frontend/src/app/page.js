@@ -2,6 +2,7 @@
 
 import styles from "./page.module.css";
 import Header from "./components/Header";
+import PersonalStats from "./components/PersonalStats";
 import GameModeCard from "./components/gameModeCard";
 import AchievementCard from "./components/AchievementCard";
 import Footer from "./components/Footer";
@@ -12,6 +13,7 @@ export default function Home() {
       <Header />
 
       <main className={styles.main}>
+        <PersonalStats />
         <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
 
         <div className={styles.cardsContainer}>
