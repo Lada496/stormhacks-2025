@@ -1,0 +1,144 @@
+/* Achievement Card Component */
+
+.card {
+    max-width: var(--card-max-width, 800px);
+    width: 100%;
+    height: var(--card-height, 240px);
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.08) 0px,
+            rgba(0, 0, 0, 0.08) 3px,
+            transparent 3px,
+            transparent 6px
+    );
+    pointer-events: none;
+    z-index: 10;
+}
+
+.cardBackground {
+    object-fit: fill;
+    z-index: 0;
+}
+
+.cardContent {
+    position: relative;
+    z-index: 1;
+    padding: var(--card-padding, 2rem);
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.leftSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    flex: 1;
+}
+
+.iconContainer {
+    width: var(--icon-size, 96px);
+    height: var(--icon-size, 96px);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.iconSlot {
+    object-fit: fill;
+    z-index: 0;
+}
+
+.icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 0;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    animation: float 1s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(5px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.textContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.title {
+    font-family: var(--font-silkscreen);
+    font-size: var(--title-size, 2rem);
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    text-shadow: 3px 0 0 rgba(0, 0, 0, 0.8),
+    0 3px 0 rgba(0, 0, 0, 0.8),
+    -3px 0 0 rgba(0, 0, 0, 0.8),
+    0 -3px 0 rgba(0, 0, 0, 0.8);
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.description {
+    font-family: var(--font-silkscreen);
+    font-size: var(--desc-size, 1.25rem);
+    font-weight: 400;
+    color: #3DF2A4;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.date {
+    font-family: var(--font-silkscreen);
+    font-size: var(--date-size, 1.25rem);
+    font-weight: 400;
+    color: #F5C846;
+    margin: 0;
+    text-shadow: 2px 0 0 rgba(0, 0, 0, 0.8),
+    0 2px 0 rgba(0, 0, 0, 0.8),
+    -2px 0 0 rgba(0, 0, 0, 0.8),
+    0 -2px 0 rgba(0, 0, 0, 0.8);
+}
+
+.badgeContainer {
+    width: var(--badge-size, 44px);
+    height: var(--badge-size, 44px);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.badge {
+    object-fit: contain;
+    z-index: 1;
+}
