@@ -370,6 +370,72 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Resume Header Container */
+.resumeHeaderContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Toggle Button */
+.toggleButton {
+  background: rgba(147, 51, 234, 0.2);
+  border: 2px solid #9333ea;
+  color: #e879f9;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.toggleButton:hover {
+  background: rgba(147, 51, 234, 0.3);
+  border-color: #a855f7;
+  color: #f3e8ff;
+  transform: translateY(-2px);
+}
+
+.toggleButton:active {
+  transform: translateY(0);
+}
+
+/* Text Input Container */
+.textInputContainer {
+  width: 100%;
+}
+
+/* Resume Textarea */
+.resumeTextarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 2px solid #475569;
+  border-radius: 12px;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.resumeTextarea:focus {
+  outline: none;
+  border-color: #9333ea;
+  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+}
+
+.resumeTextarea::placeholder {
+  color: #64748b;
+}
+
 @media (max-width: 768px) {
     .card {
         margin: 1rem;
