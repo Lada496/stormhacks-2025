@@ -1,0 +1,542 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+}
+
+.loadingCard {
+  background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+  border: 4px solid #F5C846;
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(245, 200, 70, 0.3),
+              inset 0 0 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.loadingCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.08) 0px,
+    rgba(0, 0, 0, 0.08) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.loadingCard > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Robot Animation */
+.robotContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  position: relative;
+  height: 90px;
+  padding: 0 2rem;
+}
+
+/* Block Piles */
+.blockPile,
+.completedPile {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  align-items: center;
+}
+
+.block {
+  width: 22px;
+  height: 18px;
+  background: linear-gradient(180deg, #FF6B9D 0%, #E55B8D 100%);
+  border: 2px solid #000;
+  border-radius: 3px;
+  box-shadow: 0 2px 0 #000;
+}
+
+.completedPile .block {
+  background: linear-gradient(180deg, #9D4EDD 0%, #8D3ECD 100%);
+}
+
+/* Robot Wrapper for movement */
+.robotWrapper {
+  position: absolute;
+  left: 2rem;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: carryBlock 4s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@keyframes carryBlock {
+  0% {
+    left: 2rem;
+    transform: scaleX(1) translateY(0px); /* Facing right */
+  }
+  20% {
+    left: 2rem;
+    transform: scaleX(1) translateY(5px); /* Bend down to pick up */
+  }
+  25% {
+    left: 2rem;
+    transform: scaleX(1) translateY(0px) skewX(-5deg); /* Stand up, lean forward */
+  }
+  30% {
+    left: calc(2rem + 20px);
+    transform: scaleX(1) translateY(0px) skewX(-5deg); /* Start walking */
+  }
+  50% {
+    left: calc(100% - 120px);
+    transform: scaleX(1) translateY(0px) skewX(-5deg); /* Walking across */
+  }
+  65% {
+    left: calc(100% - 120px);
+    transform: scaleX(1) translateY(0px) skewX(0deg); /* Arrive */
+  }
+  70% {
+    left: calc(100% - 120px);
+    transform: scaleX(1) translateY(5px); /* Bend down to put down */
+  }
+  75% {
+    left: calc(100% - 120px);
+    transform: scaleX(-1) translateY(0px); /* Stand up, turn around */
+  }
+  80% {
+    left: calc(100% - 140px);
+    transform: scaleX(-1) translateY(0px) skewX(5deg); /* Start walking back */
+  }
+  95% {
+    left: 2rem;
+    transform: scaleX(-1) translateY(0px) skewX(5deg); /* Walking back */
+  }
+  100% {
+    left: 2rem;
+    transform: scaleX(1) translateY(0px); /* Turn around to face right */
+  }
+}
+
+.robot {
+  position: relative;
+  transform-origin: center;
+}
+
+/* Carried Block Animation */
+.carriedBlock {
+  width: 22px;
+  height: 18px;
+  background: linear-gradient(180deg, #FF6B9D 0%, #E55B8D 100%);
+  border: 2px solid #000;
+  border-radius: 3px;
+  box-shadow: 0 2px 0 #000;
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: blockCarry 4s ease-in-out infinite;
+}
+
+@keyframes blockCarry {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1);
+  }
+  20% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1); /* Slight pop when picked up */
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  72% {
+    opacity: 0; /* Disappears when put down */
+    transform: translateX(-50%) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.robotHead {
+  width: 50px;
+  height: 40px;
+  background: linear-gradient(180deg, #F5C846 0%, #E5B836 100%);
+  border: 2px solid #000;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 3px auto;
+  box-shadow: 0 3px 0 #000;
+}
+
+.robotEye {
+  width: 8px;
+  height: 8px;
+  background: #000;
+  border-radius: 2px;
+  animation: blink 3s infinite;
+}
+
+@keyframes blink {
+  0%, 48%, 52%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+.robotBody {
+  width: 60px;
+  height: 50px;
+  background: linear-gradient(180deg, #3DF2A4 0%, #2BC78A 100%);
+  border: 2px solid #000;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 0 #000;
+}
+
+.robotPanel {
+  width: 60%;
+  height: 40%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #000;
+  border-radius: 3px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+
+/* Title */
+.title {
+  font-family: var(--font-silkscreen);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #F5C846;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 3px 0 0 rgba(0, 0, 0, 0.8),
+    0 3px 0 rgba(0, 0, 0, 0.8),
+    -3px 0 0 rgba(0, 0, 0, 0.8),
+    0 -3px 0 rgba(0, 0, 0, 0.8);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.subtitle {
+  font-family: var(--font-silkscreen);
+  font-size: 0.85rem;
+  color: #A6B3D1;
+  text-align: center;
+  margin: 0 0 2.5rem 0;
+  line-height: 1.5;
+}
+
+/* Progress Bars */
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.progressRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stageLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-silkscreen);
+  font-size: 0.8rem;
+  color: #A6B3D1;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.stageNumber {
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #F5C846;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #F5C846;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.stageName {
+  flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.checkmark {
+  color: #3DF2A4;
+  font-size: 1.2rem;
+  font-weight: 700;
+  animation: checkPop 0.3s ease-out;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.progressBarContainer {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 3px solid #475569;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.progressBar {
+  height: 100%;
+  transition: width 0.3s ease-out;
+  position: relative;
+  border-radius: 3px;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.progressBar.active {
+  animation: pulse-glow 1s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+
+.progressBar.complete {
+  animation: complete-flash 0.5s ease-out;
+}
+
+@keyframes complete-flash {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(2); }
+}
+
+.progressShine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.progressText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-silkscreen);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 1px 0 0 #000,
+    0 1px 0 #000,
+    -1px 0 0 #000,
+    0 -1px 0 #000;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Loading Messages */
+.loadingMessages {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.loadingDots {
+  font-family: var(--font-silkscreen);
+  font-size: 1.5rem;
+  color: #F5C846;
+  letter-spacing: 0.5rem;
+}
+
+.loadingDots span {
+  animation: dot-blink 1.4s infinite;
+}
+
+.loadingDots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loadingDots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loadingDots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-blink {
+  0%, 80%, 100% { opacity: 0; }
+  40% { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .loadingCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+  }
+
+  .robotContainer {
+    height: 80px;
+    padding: 0 1rem;
+  }
+
+  .robotHead {
+    width: 40px;
+    height: 32px;
+  }
+
+  .robotBody {
+    width: 50px;
+    height: 40px;
+  }
+
+  .robotEye {
+    width: 6px;
+    height: 6px;
+  }
+
+  .block {
+    width: 18px;
+    height: 15px;
+  }
+
+  .carriedBlock {
+    width: 18px;
+    height: 15px;
+    top: -20px;
+  }
+
+  .robotWrapper {
+    left: 1rem;
+  }
+
+  @keyframes carryBlock {
+    0% {
+      left: 1rem;
+      transform: scaleX(1) translateY(0px);
+    }
+    20% {
+      left: 1rem;
+      transform: scaleX(1) translateY(5px);
+    }
+    25% {
+      left: 1rem;
+      transform: scaleX(1) translateY(0px) skewX(-5deg);
+    }
+    30% {
+      left: calc(1rem + 15px);
+      transform: scaleX(1) translateY(0px) skewX(-5deg);
+    }
+    50% {
+      left: calc(100% - 90px);
+      transform: scaleX(1) translateY(0px) skewX(-5deg);
+    }
+    65% {
+      left: calc(100% - 90px);
+      transform: scaleX(1) translateY(0px) skewX(0deg);
+    }
+    70% {
+      left: calc(100% - 90px);
+      transform: scaleX(1) translateY(5px);
+    }
+    75% {
+      left: calc(100% - 90px);
+      transform: scaleX(-1) translateY(0px);
+    }
+    80% {
+      left: calc(100% - 105px);
+      transform: scaleX(-1) translateY(0px) skewX(5deg);
+    }
+    95% {
+      left: 1rem;
+      transform: scaleX(-1) translateY(0px) skewX(5deg);
+    }
+    100% {
+      left: 1rem;
+      transform: scaleX(1) translateY(0px);
+    }
+  }
+
+  .progressBarContainer {
+    height: 28px;
+  }
+
+  .progressText {
+    font-size: 0.65rem;
+  }
+}
