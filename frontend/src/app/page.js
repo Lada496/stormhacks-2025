@@ -49,7 +49,6 @@ export default function Home() {
                     {currentView === "home" && (
                         <>
                             <PersonalStats/>
-                            <PersonalStats />
             <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
 
                             <div className={styles.cardsContainer}>
