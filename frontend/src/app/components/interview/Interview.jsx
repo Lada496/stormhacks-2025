@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import styles from './Interview.module.css';
 import Image from 'next/image';
@@ -18,6 +18,12 @@ const  {
   const [isFormValid, setIsFormValid] = useState(false);
   const [interviewResults, setInterviewResults] = useState(null);
   const [showResults, setShowResults] = useState(false);
+  const showResultsRef = useRef(false);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    showResultsRef.current = showResults;
+  }, [showResults]);
  
   const hookOptions = useMemo(() => ({
     onConnect: () => console.log('[EL] Connected'),
@@ -25,7 +31,8 @@ const  {
       console.log('[EL] Disconnected', details);
       
       // Always show results when conversation ends (from either side)
-      if (!showResults) {
+      // Use ref to avoid closure issues
+      if (!showResultsRef.current) {
         // Generate hardcoded results
         const score = Math.floor(Math.random() * 30) + 70; // 70-100
         const feedback = "• Demonstrated good communication skills throughout the interview\n• Showed understanding of the role and company\n• Could improve by providing more specific examples with metrics\n• Good problem-solving approach and technical knowledge\n• Consider preparing more detailed questions about the team and projects";
