@@ -3,41 +3,41 @@ import { IoGameController } from "react-icons/io5";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import HeaderCSS from './Header.module.css'
 
-const Header = () => {
+const Header = ({ isFullscreen = false, onStartAdventure, contextText = null }) => {
     return (
-        <header style={styles.header}>
-            <h1 style={styles.title}>JobQuest AI<div className={HeaderCSS.gameController}><IoGameController></IoGameController></div>
-            </h1>
-            <h3 style={styles.subheader}>Level up your career skills through epic quests and challenges!</h3>
-            <button className={HeaderCSS.startButton}>Start Adventure<FaLongArrowAltRight></FaLongArrowAltRight></button>
+        <header className={`${HeaderCSS.header} ${isFullscreen ? HeaderCSS.fullscreen : HeaderCSS.compact}`}>
+            <div className={HeaderCSS.bannerContent}>
+                <h1 className={`${HeaderCSS.title} ${isFullscreen ? HeaderCSS.titleLarge : HeaderCSS.titleSmall}`}>
+                    JobQuest AI
+                    {!isFullscreen && (
+                        <div className={HeaderCSS.gameControllerSmall}>
+                            <IoGameController />
+                        </div>
+                    )}
+                </h1>
+
+                {!isFullscreen && contextText && (
+                    <div className={HeaderCSS.contextText}>
+                        {contextText}
+                    </div>
+                )}
+            </div>
+
+            {isFullscreen && (
+                <>
+                    <div className={HeaderCSS.gameController}>
+                        <IoGameController />
+                    </div>
+                    <h3 className={HeaderCSS.subheader}>
+                        Level up your career skills through epic quests and challenges!
+                    </h3>
+                    <button className={HeaderCSS.startButton} onClick={onStartAdventure}>
+                        Start Adventure <FaLongArrowAltRight />
+                    </button>
+                </>
+            )}
         </header>
     );
-};
-
-const styles = {
-    header: {
-        backgroundColor: '#282c34',
-        flexDirection: 'column',
-        display: 'flex',
-        padding: '25px',
-        textAlign: 'center',
-        width: '100%',
-        boxSizing: 'border-box',
-        minHeight: 'auto',
-        borderBottom: '5px solid rgb(73, 181, 221)',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    title: {
-        color: '#61dafb',
-        fontSize: '5rem',
-        margin: 0,
-    },
-    subheader: {
-        padding: '25px',
-        color: '#ffffff',
-        fontSize: '2rem',
-    },
 };
 
 export default Header;
