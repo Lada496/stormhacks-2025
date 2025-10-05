@@ -7,6 +7,12 @@ import Image from 'next/image';
 
 export default function Interview() {
   const [micMuted, setMicMuted] = useState(false);
+  const [file, setFile] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [parsedText, setParsedText] = useState(null);
+  const [jobDescription, setJobDescription] = useState('');
+  const [userName, setUserName] = useState('');
+  const [error, setError] = useState(null);
 
   const hookOptions = useMemo(() => ({
     onConnect: () => console.log('[EL] Connected'),
@@ -35,12 +41,64 @@ export default function Interview() {
       await conversation.startSession({
         agentId: 'agent_0001k6rp4663f1y8zf4xd378w3hf',
         dynamicVariables: {
-            user_name: 'JobQuest Challenger'
+            user_name: userName || 'JobQuest Challenger',
+            resume_text: parsedText || '',
+            job_description: jobDescription || ''
         },
       });
     } catch (error) {
       console.error('Error starting conversation:', error);
     }
+  };
+
+  const handleFileUpload = async (uploadedFile) => {
+    if (!uploadedFile) return;
+
+    if (uploadedFile.type !== "application/pdf" && uploadedFile.type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+      setError("Please upload a PDF or DOCX file");
+      return;
+    }
+
+    setFile(uploadedFile);
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("resume", uploadedFile);
+
+      const response = await fetch("/api/parse-resume", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to parse resume");
+      }
+
+      const data = await response.json();
+      setParsedText(data.text);
+      console.log("Resume parsed successfully:", data.text);
+    } catch (err) {
+      setError(err.message || "Failed to parse resume");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const uploadedFile = event.target.files[0];
+    handleFileUpload(uploadedFile);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+    handleFileUpload(droppedFile);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
   };
 
   const handleEndConversation = async () => {
@@ -105,8 +163,69 @@ export default function Interview() {
         <h2 className={styles.title}>VOICE INTERVIEW TRAINER</h2>
         <p className={styles.description}>
           Practice your interview skills with AI-powered voice conversations. 
-          Get real-time feedback and improve your communication!
+          Upload your resume and job description for personalized questions!
         </p>
+
+        {/* Name Input Section */}
+        <div className={styles.nameSection}>
+          <label className={styles.inputLabel}>YOUR NAME:</label>
+          <input
+            type="text"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Enter your name for a personalized interview..."
+            className={styles.nameInput}
+          />
+        </div>
+
+        {/* Resume Upload Section */}
+        <div className={styles.uploadSection}>
+          <label className={styles.inputLabel}>RESUME UPLOAD (OPTIONAL):</label>
+          <div
+            className={styles.dropZone}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onClick={() => document.getElementById('resume-upload').click()}
+          >
+            {isProcessing ? (
+              <div className={styles.processingText}>PROCESSING...</div>
+            ) : file ? (
+              <div className={styles.fileName}>✓ {file.name}</div>
+            ) : (
+              <div className={styles.uploadText}>
+                <div className={styles.uploadIcon}>📎</div>
+                Click to upload or drag & drop your resume
+                <div className={styles.uploadSubtext}>PDF or DOCX files only</div>
+              </div>
+            )}
+            <input
+              id="resume-upload"
+              type="file"
+              accept=".pdf,.docx"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              disabled={isProcessing}
+            />
+          </div>
+          {error && <div className={styles.errorMessage}>⚠️ {error}</div>}
+          {parsedText && (
+            <div className={styles.successMessage}>
+              ✅ Resume parsed successfully!
+            </div>
+          )}
+        </div>
+
+        {/* Job Description Section */}
+        <div className={styles.jobDescSection}>
+          <label className={styles.inputLabel}>JOB DESCRIPTION (OPTIONAL):</label>
+          <textarea
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+            placeholder="Paste the job description here for tailored interview questions..."
+            className={styles.jobDescTextarea}
+            rows={3}
+          />
+        </div>
 
         <div className={styles.statusDisplay}>
           <div className={styles.statusItem}>
