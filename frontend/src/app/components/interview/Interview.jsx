@@ -5,9 +5,17 @@ import { useConversation } from '@elevenlabs/react';
 import styles from './Interview.module.css';
 import Image from 'next/image';
 
-export default function Interview() {
+export default function Interview(props) {
+const  {
+    setCurrentView,
+} = props;
   const [micMuted, setMicMuted] = useState(false);
-
+  const [jobDescription, setJobDescription] = useState('');
+  const [userName, setUserName] = useState('');
+  const [error, setError] = useState(null);
+  const [resumeText, setResumeText] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
+ 
   const hookOptions = useMemo(() => ({
     onConnect: () => console.log('[EL] Connected'),
     onDisconnect: (details) => console.log('[EL] Disconnected', details),
@@ -18,6 +26,10 @@ export default function Interview() {
 
   const conversation = useConversation(hookOptions);
 
+  useEffect(() => {
+    setIsFormValid(userName.trim() && resumeText.trim() && jobDescription.trim());
+  }, [userName, resumeText, jobDescription]);
+
   // Ensure WS/worklet are torn down when component unmounts or hot-reloads
   useEffect(() => {
     return () => {
@@ -27,19 +39,31 @@ export default function Interview() {
   }, []);
 
   const handleStartConversation = async () => {
+    // Validate required fields
+    if (!isFormValid) {
+      setError('Please complete all required fields before starting the interview');
+      return;
+    }
+
     try {
       if (conversation.status === 'connected' || conversation.status === 'connecting') {
         console.log('[EL] Session already active or connecting');
         return;
       }
+      
+      setError(null); // Clear any previous errors
+      
       await conversation.startSession({
         agentId: 'agent_0001k6rp4663f1y8zf4xd378w3hf',
         dynamicVariables: {
-            user_name: 'JobQuest Challenger'
+            user_name: userName,
+            resume_text: resumeText,
+            job_description: jobDescription,
         },
       });
     } catch (error) {
       console.error('Error starting conversation:', error);
+      setError('Failed to start conversation. Please try again.');
     }
   };
 
@@ -59,13 +83,11 @@ export default function Interview() {
   };
 
   const handleBackToMenu = () => {
-    // Navigate back to main menu
-    
+    setCurrentView("home");
   };
 
   const handleViewResults = () => {
     // Navigate to results page
-   
   };
 
   return (
@@ -105,8 +127,50 @@ export default function Interview() {
         <h2 className={styles.title}>VOICE INTERVIEW TRAINER</h2>
         <p className={styles.description}>
           Practice your interview skills with AI-powered voice conversations. 
-          Get real-time feedback and improve your communication!
+          Upload your resume and job description for personalized questions!
         </p>
+
+        {/* Name Input Section */}
+        <div className={styles.nameSection}>
+          <label className={styles.inputLabel}>YOUR NAME (REQUIRED):</label>
+          <input
+            type="text"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Enter your name..."
+            className={styles.nameInput}
+          />
+        </div>
+
+        {/* Resume Text Section */}
+        <div className={styles.uploadSection}>
+          <label className={styles.inputLabel}>RESUME TEXT (REQUIRED):</label>
+          <textarea
+            value={resumeText}
+            onChange={(e) => setResumeText(e.target.value)}
+            placeholder="Paste your resume text here..."
+            className={styles.resumeTextarea}
+            rows={8}
+          />
+          {resumeText && (
+            <div className={styles.successMessage}>
+              ✅ Resume text added successfully!
+            </div>
+          )}
+          {error && <div className={styles.errorMessage}>⚠️ {error}</div>}
+        </div>
+
+        {/* Job Description Section */}
+        <div className={styles.jobDescSection}>
+          <label className={styles.inputLabel}>JOB DESCRIPTION (REQUIRED):</label>
+          <textarea
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+            placeholder="Paste the job description here for tailored interview questions..."
+            className={styles.jobDescTextarea}
+            rows={3}
+          />
+        </div>
 
         <div className={styles.statusDisplay}>
           <div className={styles.statusItem}>
@@ -127,7 +191,7 @@ export default function Interview() {
           <button 
             className={styles.actionButton}
             onClick={handleStartConversation}
-            disabled={conversation.status === 'connected' || conversation.status === 'connecting'}
+            disabled={conversation.status === 'connected' || conversation.status === 'connecting' || !isFormValid}
           >
             <Image
               src="/assets/buttons/button-green.svg"
@@ -171,7 +235,7 @@ export default function Interview() {
           </button>
 
           {/* Navigation buttons */}
-          <div className={styles.navigationButtons}>
+        
             <button 
               className={styles.actionButton}
               onClick={handleBackToMenu}
@@ -184,21 +248,6 @@ export default function Interview() {
               />
               <span className={styles.buttonText}>BACK TO MENU</span>
             </button>
-
-            <button 
-              className={styles.actionButton}
-              onClick={handleViewResults}
-              disabled={conversation.status === 'connected' || conversation.status === 'connecting'}
-            >
-              <Image
-                src="/assets/buttons/button-purple.svg"
-                alt=""
-                fill
-                className={styles.buttonBackground}
-              />
-              <span className={styles.buttonText}>VIEW RESULTS</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>
