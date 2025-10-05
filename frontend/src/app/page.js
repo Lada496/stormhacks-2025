@@ -11,6 +11,7 @@ import Interview from "./components/interview/Interview";
 import ResumeReviewLite from "./components/ResumeReviewLite";
 import ResumeReview from "./components/ResumeReview";
 import ResultView from "./components/ResultView";
+
 export default function Home() {
   const [currentView, setCurrentView] = useState("home");
   const [questData, setQuestData] = useState(null);
