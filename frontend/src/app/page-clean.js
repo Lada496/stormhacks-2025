@@ -1,4 +1,4 @@
-import VoiceGenerator from "@/components/VoiceGenerator";
+import VoiceGenerator from "@/app/components/interview/VoiceGenerator";
 
 export default function Home() {
   return (
