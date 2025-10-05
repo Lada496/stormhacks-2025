@@ -31,7 +31,7 @@ const ResumeReview = ({ setUserStats }) => {
       console.log({ data });
       setUserStats((prev) => ({
         ...prev,
-        xp: (data.overallScore / 100) * 50 || 0,
+        xp: prev.xp + (data.overallScore / 100) * 50 || 0,
       }));
       setShow(true);
     } catch (err) {
