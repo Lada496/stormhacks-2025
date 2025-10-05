@@ -5,6 +5,10 @@ import styles from "./ResumeReview.module.css";
 import ResultView from "./ResultView";
 // import ResumeParser from './ResumeParser';
 
+// LOADING SCREEN - Add these imports
+import LoadingScreen from './LoadingScreen';
+import { useLoadingProgress } from '../hooks/useLoadingProgress';
+
 const ResumeReview = ({ setUserStats }) => {
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -16,9 +20,15 @@ const ResumeReview = ({ setUserStats }) => {
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
 
+  // LOADING SCREEN - Add progress hook
+  const { progress, startProgress, completeProgress } = useLoadingProgress();
+
   const callAgent = async (e) => {
     e.preventDefault();
     setLoading(true);
+    // LOADING SCREEN - Start progress animation
+    startProgress();
+
     try {
       const res = await fetch("/api/call-resume-analyzer-agent", {
         method: "POST",
@@ -37,6 +47,8 @@ const ResumeReview = ({ setUserStats }) => {
     } catch (err) {
       setResponse("Error calling agent");
     } finally {
+      // LOADING SCREEN - Complete progress and hide
+      await completeProgress();
       setLoading(false);
     }
   };
@@ -96,6 +108,9 @@ const ResumeReview = ({ setUserStats }) => {
 
   return (
     <>
+      {/* LOADING SCREEN - Show animated loading screen */}
+      {loading && <LoadingScreen progress={progress} />}
+
       {error && <p>Something went wrong!</p>}
       {show && !loading ? (
         <ResultView response={response} />
