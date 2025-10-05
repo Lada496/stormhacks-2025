@@ -147,23 +147,27 @@
 .nameInput {
     width: 100%;
     padding: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid #475569;
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.3);
     color: #ffffff;
     font-family: var(--font-silkscreen);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .nameInput::placeholder {
-    color: #A6B3D1;
-    opacity: 0.7;
+    color: #64748b;
+    font-style: italic;
+    opacity: 0.8;
 }
 
 .nameInput:focus {
     outline: none;
-    border-color: rgba(255, 255, 255, 0.5);
-    background: rgba(0, 0, 0, 0.4);
+    border-color: #9333ea;
+    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
 }
 
 .inputLabel {
@@ -253,25 +257,29 @@
 .jobDescTextarea {
     width: 100%;
     padding: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid #475569;
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.3);
     color: #ffffff;
     font-family: var(--font-silkscreen);
     font-size: 0.8rem;
+    line-height: 1.6;
     resize: vertical;
-    min-height: 60px;
+    min-height: 80px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .jobDescTextarea::placeholder {
-    color: #A6B3D1;
-    opacity: 0.7;
+    color: #64748b;
+    font-style: italic;
+    opacity: 0.8;
 }
 
 .jobDescTextarea:focus {
     outline: none;
-    border-color: rgba(255, 255, 255, 0.5);
-    background: rgba(0, 0, 0, 0.4);
+    border-color: #9333ea;
+    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
 }
 
 .statusDisplay {
@@ -414,16 +422,17 @@
 .resumeTextarea {
   width: 100%;
   min-height: 200px;
-  padding: 16px;
-  background: rgba(15, 23, 42, 0.8);
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
   border: 2px solid #475569;
-  border-radius: 12px;
-  color: #e2e8f0;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: var(--font-silkscreen);
+  font-size: 0.8rem;
   line-height: 1.6;
   resize: vertical;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .resumeTextarea:focus {
@@ -434,6 +443,8 @@
 
 .resumeTextarea::placeholder {
   color: #64748b;
+  font-style: italic;
+  opacity: 0.8;
 }
 
 @media (max-width: 768px) {
