@@ -1,0 +1,138 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto 2rem auto;
+}
+
+.uploadSection {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #F5C846;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-silkscreen);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  margin: 0 0 0.75rem 0;
+  text-shadow: 3px 0 0 rgba(0, 0, 0, 0.8),
+    0 3px 0 rgba(0, 0, 0, 0.8),
+    -3px 0 0 rgba(0, 0, 0, 0.8),
+    0 -3px 0 rgba(0, 0, 0, 0.8);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.description {
+  font-family: var(--font-silkscreen);
+  font-size: 0.95rem;
+  color: #A6B3D1;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+}
+
+.dropZone {
+  display: block;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  border: 3px dashed #F5C846;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.dropZone:hover {
+  background: rgba(245, 200, 70, 0.1);
+  border-color: #ffdd57;
+}
+
+.uploadText {
+  font-family: var(--font-silkscreen);
+  font-size: 1rem;
+  color: #F5C846;
+  text-transform: uppercase;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.processing {
+  font-family: var(--font-silkscreen);
+  font-size: 1rem;
+  color: #3DF2A4;
+  text-transform: uppercase;
+  animation: pulse 1.5s ease-in-out infinite;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.fileName {
+  font-family: var(--font-silkscreen);
+  font-size: 0.9rem;
+  color: #3DF2A4;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.fileInput {
+  display: none;
+}
+
+.error {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 0, 0, 0.2);
+  border: 2px solid #ff4444;
+  border-radius: 8px;
+  font-family: var(--font-silkscreen);
+  color: #ff4444;
+  font-size: 0.9rem;
+}
+
+.successMessage {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(61, 242, 164, 0.2);
+  border: 2px solid #3DF2A4;
+  border-radius: 8px;
+  font-family: var(--font-silkscreen);
+  color: #3DF2A4;
+  font-size: 0.9rem;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin: 0 0 1.5rem 0;
+  }
+
+  .uploadSection {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .dropZone {
+    padding: 2rem 1rem;
+  }
+
+  .uploadText {
+    font-size: 0.85rem;
+  }
+}
