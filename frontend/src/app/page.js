@@ -137,7 +137,7 @@ export default function Home() {
 
           {currentView === "interview" && (
             <div className={styles.questView}>
-              <Interview setCurrentView={setCurrentView}/>
+              <Interview setCurrentView={setCurrentView} />
             </div>
           )}
 
@@ -145,8 +145,8 @@ export default function Home() {
             <div className={styles.questView}>
               <h1 className={styles.questHeader}>{questData?.title}</h1>
               <div style={{ color: "#ffffff", fontSize: "1.5rem" }}>
-                <ResumeReviewLite setUserStats={setUserStats} />
-                {/* <ResumeReview setUserStats={setUserStats}></ResumeReview> */}
+                {/* <ResumeReviewLite setUserStats={setUserStats} /> */}
+                <ResumeReview setUserStats={setUserStats} />
               </div>
               <button className={styles.backButton} onClick={handleBackToHome}>
                 ← BACK TO HOME
