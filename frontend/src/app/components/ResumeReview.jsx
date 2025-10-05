@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import styles from "./ResumeReview.module.css";
+import ResultView from "./ResultView";
 // import ResumeParser from './ResumeParser';
 
-const ResumeReview = () => {
+const ResumeReview = ({ setUserStats }) => {
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [parsedText, setParsedText] = useState(null);
@@ -15,7 +16,8 @@ const ResumeReview = () => {
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
 
-  const callAgent = async () => {
+  const callAgent = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
       const res = await fetch("/api/call-resume-analyzer-agent", {
@@ -26,12 +28,12 @@ const ResumeReview = () => {
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const data = await res.json();
       setResponse(data);
+      console.log({ data });
       setUserStats((prev) => ({
         ...prev,
-        xp: data.overallScore || 0,
+        xp: (data.overallScore / 100) * 50 || 0,
       }));
       setShow(true);
-      console.log({ data });
     } catch (err) {
       setResponse("Error calling agent");
     } finally {
@@ -95,8 +97,8 @@ const ResumeReview = () => {
   return (
     <>
       {error && <p>Something went wrong!</p>}
-      {show ? (
-        <ResumeReview response={response} />
+      {show && !loading ? (
+        <ResultView response={response} />
       ) : (
         <div className={styles.container}>
           <div className={styles.uploadSection}>
@@ -141,7 +143,7 @@ const ResumeReview = () => {
           <div className={styles.uploadSection}>
             <h2 className={styles.title}>JOB DESCRIPTION</h2>
             {/* <p className={styles.description}>Paste the job description here</p> */}
-            <form className={styles.submitForm} onSubmit={(e) => callAgent}>
+            <form className={styles.submitForm} onSubmit={callAgent}>
               <textarea
                 className={styles.textarea}
                 placeholder="Paste the job description here..."
