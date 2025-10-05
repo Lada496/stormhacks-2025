@@ -11,9 +11,10 @@ export default function Interview() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [parsedText, setParsedText] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState(null);
   const [error, setError] = useState(null);
-
+  const [allFieldsCompleted, setAllFieldsCompleted] = useState(false);
+ 
   const hookOptions = useMemo(() => ({
     onConnect: () => console.log('[EL] Connected'),
     onDisconnect: (details) => console.log('[EL] Disconnected', details),
@@ -24,6 +25,12 @@ export default function Interview() {
 
   const conversation = useConversation(hookOptions);
 
+  useEffect(() => {
+    setAllFieldsCompleted(userName && userName.trim() && jobDescription && jobDescription.trim() && file);
+  }, [userName, file, jobDescription]);
+
+  const isFormValid = userName && userName.trim() !== '';
+
   // Ensure WS/worklet are torn down when component unmounts or hot-reloads
   useEffect(() => {
     return () => {
@@ -33,11 +40,20 @@ export default function Interview() {
   }, []);
 
   const handleStartConversation = async () => {
+    // Validate required fields
+    if (!allFieldsCompleted) {
+      setError('Please enter your name before starting the interview');
+      return;
+    }
+
     try {
       if (conversation.status === 'connected' || conversation.status === 'connecting') {
         console.log('[EL] Session already active or connecting');
         return;
       }
+      
+      setError(null); // Clear any previous errors
+      
       await conversation.startSession({
         agentId: 'agent_0001k6rp4663f1y8zf4xd378w3hf',
         dynamicVariables: {
@@ -48,6 +64,7 @@ export default function Interview() {
       });
     } catch (error) {
       console.error('Error starting conversation:', error);
+      setError('Failed to start conversation. Please try again.');
     }
   };
 
@@ -168,19 +185,19 @@ export default function Interview() {
 
         {/* Name Input Section */}
         <div className={styles.nameSection}>
-          <label className={styles.inputLabel}>YOUR NAME:</label>
+          <label className={styles.inputLabel}>YOUR NAME (REQUIRED):</label>
           <input
             type="text"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            placeholder="Enter your name for a personalized interview..."
+            placeholder="Enter your name..."
             className={styles.nameInput}
           />
         </div>
 
         {/* Resume Upload Section */}
         <div className={styles.uploadSection}>
-          <label className={styles.inputLabel}>RESUME UPLOAD (OPTIONAL):</label>
+          <label className={styles.inputLabel}>RESUME UPLOAD (REQUIRED):</label>
           <div
             className={styles.dropZone}
             onDrop={handleDrop}
@@ -217,7 +234,7 @@ export default function Interview() {
 
         {/* Job Description Section */}
         <div className={styles.jobDescSection}>
-          <label className={styles.inputLabel}>JOB DESCRIPTION (OPTIONAL):</label>
+          <label className={styles.inputLabel}>JOB DESCRIPTION (REQUIRED):</label>
           <textarea
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
@@ -246,7 +263,7 @@ export default function Interview() {
           <button 
             className={styles.actionButton}
             onClick={handleStartConversation}
-            disabled={conversation.status === 'connected' || conversation.status === 'connecting'}
+            disabled={conversation.status === 'connected' || conversation.status === 'connecting' || !isFormValid}
           >
             <Image
               src="/assets/buttons/button-green.svg"
