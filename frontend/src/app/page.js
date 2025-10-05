@@ -48,7 +48,8 @@ export default function Home() {
                     {currentView === "home" && (
                         <>
                             <PersonalStats/>
-                            <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
+                            <PersonalStats />
+            <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
 
                             <div className={styles.cardsContainer}>
                                 <GameModeCard
