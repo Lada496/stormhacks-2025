@@ -1,8 +1,8 @@
 .score {
   text-align: center;
-  font-size: 3.5rem;
+  font-size: 2rem;
   margin-bottom: 1rem;
-  color: #61dafb;
+  color: #67dcde;
 }
 .review {
   color: white;
@@ -26,4 +26,53 @@
 .feedback-box {
   font-size: 1.2rem;
   padding: 10px 30px 10px 30px;
+}
+
+.overall-score-box {
+  font-size: 4rem;
+  padding: 18px;
+  border: 3px #67dcde solid;
+  background-color: #203a47;
+  margin-bottom: 10px;
+}
+
+.score-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #67dcde;
+}
+
+.detailed-score-container {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.wrapper {
+  flex: 1;
+}
+
+.progressBarContainer {
+  height: 20px;
+  width: 90%;
+  background-color: #2e2e4e; /* Darker background for the progress bar */
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px auto;
+}
+
+.progressBar {
+  height: 100%;
+  background-color: #73b5dd; /* Light blue for the progress bar */
+  transition: width 0.3s ease-in-out; /* Smooth transition for progress updates */
+}
+
+.xpText {
+  margin-top: 10px;
+  font-size: 1.25rem;
+  color: #ffffff;
+  text-align: end;
 }

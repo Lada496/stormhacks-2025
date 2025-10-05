@@ -8,12 +8,19 @@ import AchievementCard from "./components/AchievementCard";
 import Footer from "./components/Footer";
 import PersonalStats from "@/app/components/PersonalStats";
 import Interview from "./components/interview/Interview";
-import ResumeReviewLite from './components/ResumeReviewLite';
-
+import ResumeReviewLite from "./components/ResumeReviewLite";
+import ResumeReview from "./components/ResumeReview";
+import ResultView from "./components/ResultView";
 export default function Home() {
   const [currentView, setCurrentView] = useState("home");
   const [questData, setQuestData] = useState(null);
   const [isStarted, setIsStarted] = useState(false);
+  const [userStats, setUserStats] = useState({
+    level: 1,
+    badges: 1,
+    streak: 2,
+    xp: 0, // Progress percentage for the current level
+  });
 
   const handleStartAdventure = () => {
     setIsStarted(true);
@@ -36,6 +43,14 @@ export default function Home() {
     return "🏠 Quest Selection";
   };
 
+  const response = {
+    overallScore: 92,
+    keywordScore: 95,
+    contentQualityScore: 90,
+    feedback:
+      "John Doe is an excellent match for this Full-Stack Software Engineer position. With 5+ years of experience in full-stack development (exceeding the 3+ year requirement), he demonstrates strong proficiency in the exact technologies required: JavaScript, React, and Node.js. His resume shows direct experience developing and maintaining web applications using these frameworks, as well as building REST APIs. The candidate has strong AWS cloud experience, having led migration projects to AWS environments and worked with specific AWS services (EC2, S3, Lambda). He possesses knowledge of SQL as required, and has extensive experience with Agile/Scrum methodologies in cross-functional team settings. Additionally, John meets both preferred qualifications with Python experience (including Django framework) and familiarity with Docker. His QA testing experience aligns with the code quality requirement. Overall, John Doe's technical skills, relevant experience, and background in building scalable web applications make him a very strong candidate for this position.",
+  };
+
   return (
     <div className={styles.page}>
       <Header
@@ -44,12 +59,13 @@ export default function Home() {
         contextText={getContextText()}
       />
 
-            {isStarted && (
-                <main className={styles.main}>
-                    {currentView === "home" && (
-                        <>
-                            <PersonalStats/>
-            <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
+      {isStarted && (
+        <main className={styles.main}>
+          {/* <ResultView error={false} response={response} /> */}
+          {currentView === "home" && (
+            <>
+              <PersonalStats userStats={userStats} />
+              <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
 
               <div className={styles.cardsContainer}>
                 <GameModeCard
@@ -124,19 +140,20 @@ export default function Home() {
             </div>
           )}
 
-                    {currentView === "resume" && (
-                        <div className={styles.questView}>
-                            <h1 className={styles.questHeader}>{questData?.title}</h1>
-                            <p style={{color: "#ffffff", fontSize: "1.5rem"}}>
-                                <ResumeReviewLite></ResumeReviewLite>
-                            </p>
-                            <button className={styles.backButton} onClick={handleBackToHome}>
-                                ← BACK TO HOME
-                            </button>
-                        </div>
-                    )}
-                </main>
-            )}
+          {currentView === "resume" && (
+            <div className={styles.questView}>
+              <h1 className={styles.questHeader}>{questData?.title}</h1>
+              <div style={{ color: "#ffffff", fontSize: "1.5rem" }}>
+                <ResumeReviewLite setUserStats={setUserStats} />
+                {/* <ResumeReview setUserStats={setUserStats}></ResumeReview> */}
+              </div>
+              <button className={styles.backButton} onClick={handleBackToHome}>
+                ← BACK TO HOME
+              </button>
+            </div>
+          )}
+        </main>
+      )}
 
       {isStarted && <Footer />}
     </div>
