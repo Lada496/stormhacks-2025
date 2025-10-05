@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import styles from './Interview.module.css';
 import Image from 'next/image';
+import InterviewResultView from './InterviewResultView';
 
 export default function Interview(props) {
 const  {
@@ -15,10 +16,27 @@ const  {
   const [error, setError] = useState(null);
   const [resumeText, setResumeText] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
+  const [interviewResults, setInterviewResults] = useState(null);
+  const [showResults, setShowResults] = useState(false);
  
   const hookOptions = useMemo(() => ({
     onConnect: () => console.log('[EL] Connected'),
-    onDisconnect: (details) => console.log('[EL] Disconnected', details),
+    onDisconnect: (details) => {
+      console.log('[EL] Disconnected', details);
+      
+      // Always show results when conversation ends (from either side)
+      if (!showResults) {
+        // Generate hardcoded results
+        const score = Math.floor(Math.random() * 30) + 70; // 70-100
+        const feedback = "• Demonstrated good communication skills throughout the interview\n• Showed understanding of the role and company\n• Could improve by providing more specific examples with metrics\n• Good problem-solving approach and technical knowledge\n• Consider preparing more detailed questions about the team and projects";
+        
+        setInterviewResults({
+          score: score,
+          feedback: feedback
+        });
+        setShowResults(true);
+      }
+    },
     onMessage: (message) => console.log('[EL] Message:', message),
     onError: (error) => console.error('[EL] Error:', error),
     micMuted,
@@ -73,6 +91,20 @@ const  {
         await conversation.endSession();
       }
       setMicMuted(true);
+      
+      // Always show results after ending conversation
+      if (!showResults) {
+        // Generate hardcoded results
+        const score = Math.floor(Math.random() * 30) + 70; // 70-100
+        const feedback = "• Demonstrated good communication skills throughout the interview\n• Showed understanding of the role and company\n• Could improve by providing more specific examples with metrics\n• Good problem-solving approach and technical knowledge\n• Consider preparing more detailed questions about the team and projects";
+        
+        setInterviewResults({
+          score: score,
+          feedback: feedback
+        });
+        setShowResults(true);
+      }
+      
     } catch (error) {
       console.error('Error ending conversation:', error);
     }
@@ -89,6 +121,67 @@ const  {
   const handleViewResults = () => {
     // Navigate to results page
   };
+
+  const handleNewInterview = () => {
+    // Reset all state for a new interview
+    setShowResults(false);
+    setInterviewResults(null);
+    setUserName('');
+    setResumeText('');
+    setJobDescription('');
+    setError(null);
+    setMicMuted(false);
+  };
+
+  // Show results view if interview is complete
+  if (showResults && interviewResults) {
+    return (
+      <div className={styles.card}>
+        <Image
+          src="/assets/cards/card-purple.svg"
+          alt=""
+          fill
+          className={styles.cardBackground}
+        />
+        <div className={styles.cardContent}>
+          <h2 className={styles.title}>INTERVIEW COMPLETE!</h2>
+          
+          <InterviewResultView 
+            interviewScore={interviewResults.score}
+            feedback={interviewResults.feedback}
+          />
+          
+          <div className={styles.buttonContainer}>
+            <button 
+              className={styles.actionButton}
+              onClick={handleNewInterview}
+            >
+              <Image
+                src="/assets/buttons/button-green.svg"
+                alt=""
+                fill
+                className={styles.buttonBackground}
+              />
+              <span className={styles.buttonText}>NEW INTERVIEW</span>
+            </button>
+
+            <button 
+              className={styles.actionButton}
+              onClick={handleBackToMenu}
+            >
+              <Image
+                src="/assets/buttons/button-orange.svg"
+                alt=""
+                fill
+                className={styles.buttonBackground}
+              />
+              <span className={styles.buttonText}>BACK TO MENU</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.card}>
