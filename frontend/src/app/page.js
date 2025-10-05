@@ -1,21 +1,40 @@
 "use client";
 
+
 import styles from "./page.module.css";
 import Header from "./components/Header";
 import GameModeCard from "./components/gameModeCard";
 import AchievementCard from "./components/AchievementCard";
 import Footer from "./components/Footer";
+import Interview from "./components/interview/Interview";
+
 
 export default function Home() {
+
+
+  const handleNavigateToInterview = () => {
+ 
+  };
+
   return (
     <div className={styles.page}>
       <Header />
-
       <main className={styles.main}>
-        <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
+{
+    true &&
+    <>
+    <Interview/>
+    </>
+}    
 
-        <div className={styles.cardsContainer}>
+        {
+            false && 
+            <>
+              
+              <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
+            <div className={styles.cardsContainer}>
           <GameModeCard
+            
             icon="/assets/interview-icon.png"
             theme="pink"
             title="BEHAVIORAL INTERVIEW"
@@ -23,7 +42,7 @@ export default function Home() {
             xp={100}
             buttonText="START QUEST"
             size="small"
-            onStartQuest={() => console.log("Starting quest!")}
+            onStartQuest={handleNavigateToInterview}
           />
 
           <GameModeCard
@@ -66,6 +85,9 @@ export default function Home() {
             size="small"
           />
         </div>
+            </>  
+        }
+        
       </main>
 
       <Footer />

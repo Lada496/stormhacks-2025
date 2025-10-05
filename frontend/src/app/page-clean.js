@@ -1,4 +1,4 @@
-import VoiceGenerator from "@/app/components/interview/VoiceGenerator";
+import Interview from "@/app/components/interview/Interview";
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           StormHacks 2025 - Voice App
         </h1>
-        <VoiceGenerator />
+        <Interview />
       </div>
     </div>
   );
