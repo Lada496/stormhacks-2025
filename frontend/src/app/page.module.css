@@ -1,19 +1,11 @@
 .page {
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-
-  display: grid;
-  grid-template-rows: 20px 1fr 20px;
-  align-items: center;
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
   justify-items: center;
-  min-height: 100svh;
-  padding: 80px;
-  gap: 64px;
-  font-family: var(--font-geist-sans);
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,22 +22,88 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  grid-row-start: 2;
+  gap: 64px;
+  align-items: center;
+  width: 100%;
+  padding: 4rem 2rem;
+  padding-top: calc(4rem + 80px);
+  background-color: #1a1a2e;
+  flex-grow: 1;
 }
 
-.main ol {
-  font-family: var(--font-geist-mono);
-  padding-left: 0;
+.questHeader {
+  font-family: "Silkscreen", sans-serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: #61dafb;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
   margin: 0;
-  font-size: 14px;
-  line-height: 24px;
-  letter-spacing: -0.01em;
-  list-style-position: inside;
+  text-shadow:
+    4px 0 0 rgba(0, 0, 0, 0.8),
+    0 4px 0 rgba(0, 0, 0, 0.8),
+    -4px 0 0 rgba(0, 0, 0, 0.8),
+    0 -4px 0 rgba(0, 0, 0, 0.8);
 }
 
-.main li:not(:last-of-type) {
-  margin-bottom: 8px;
+.cardsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.achievementsContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+@media (max-width: 900px) {
+  .achievementsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.questView {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.backButton {
+  font-family: "Silkscreen", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  background-color: #61dafb;
+  color: #000000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.backButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.backButton:active {
+  transform: translateY(0px);
 }
 
 .main code {

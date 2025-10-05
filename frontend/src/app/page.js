@@ -1,95 +1,148 @@
-import Image from "next/image";
+"use client";
+
+import {useState} from "react";
 import styles from "./page.module.css";
+import Header from "./components/Header";
+import GameModeCard from "./components/gameModeCard";
+import AchievementCard from "./components/AchievementCard";
+import Footer from "./components/Footer";
+import PersonalStats from "@/app/components/PersonalStats";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing da code in <code>src/app/page.js</code>.
-          </li>
-          <li>Save da project and see your changes instantly.</li>
-        </ol>
+    const [currentView, setCurrentView] = useState("home"); // home, interview, resume
+    const [questData, setQuestData] = useState(null);
+    const [isStarted, setIsStarted] = useState(false);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    const handleStartAdventure = () => {
+        setIsStarted(true);
+    };
+
+    const handleStartQuest = (questType, data) => {
+        setCurrentView(questType);
+        setQuestData(data);
+    };
+
+    const handleBackToHome = () => {
+        setCurrentView("home");
+        setQuestData(null);
+    };
+
+    const getContextText = () => {
+        if (!isStarted) return null;
+        if (currentView === "interview") return "📝 Behavioral Interview Quest";
+        if (currentView === "resume") return "📄 Resume Review Quest";
+        return "🏠 Quest Selection";
+    };
+
+    return (
+        <div className={styles.page}>
+            <Header
+                isFullscreen={!isStarted}
+                onStartAdventure={handleStartAdventure}
+                contextText={getContextText()}
             />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+
+            {isStarted && <main className={styles.main}>
+                {currentView === "home" && (
+                    <>
+                        <PersonalStats/>
+                        <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
+
+                        <div className={styles.cardsContainer}>
+                            <GameModeCard
+                                icon="/assets/interview-icon.png"
+                                theme="pink"
+                                title="BEHAVIORAL INTERVIEW"
+                                description="Practice common interview questions and improve your answers"
+                                xp={100}
+                                buttonText="START QUEST"
+                                size="small"
+                                onStartQuest={() => handleStartQuest("interview", {
+                                    title: "BEHAVIORAL INTERVIEW",
+                                    theme: "pink",
+                                    xp: 100
+                                })}
+                            />
+
+                            <GameModeCard
+                                icon="/assets/resume-icon.png"
+                                theme="blue"
+                                title="RESUME REVIEW"
+                                description="Optimize your resume with AI-powered feedback and tips"
+                                xp={50}
+                                buttonText="START QUEST"
+                                size="small"
+                                onStartQuest={() => handleStartQuest("resume", {
+                                    title: "RESUME REVIEW",
+                                    theme: "blue",
+                                    xp: 50
+                                })}
+                            />
+                        </div>
+
+                        <h1 className={styles.questHeader}>ACHIEVEMENT HALL</h1>
+
+                        <div className={styles.achievementsContainer}>
+                            <AchievementCard
+                                title="INTERVIEW MASTER"
+                                description="Ace 10 behavioral interviews"
+                                unlockedDate="2024-02-20"
+                                size="small"
+                            />
+                            <AchievementCard
+                                title="WEEK WARRIOR"
+                                description="Maintain a 7-day streak"
+                                unlockedDate="2024-03-01"
+                                size="small"
+                            />
+                            <AchievementCard
+                                title="FIRST STEPS"
+                                description="Complete your first resume review"
+                                unlockedDate="2024-01-15"
+                                size="small"
+                            />
+                            <AchievementCard
+                                title="TECH EXPERT"
+                                description="Pass 5 technical interviews"
+                                unlockedDate="2024-03-10"
+                                size="small"
+                            />
+                        </div>
+                    </>
+                )}
+
+                {currentView === "interview" && (
+                    <div className={styles.questView}>
+                        <h1 className={styles.questHeader}>{questData?.title}</h1>
+                        <p style={{color: "#ffffff", fontSize: "1.5rem"}}>
+                            Interview quest content will go here...
+                        </p>
+                        <button
+                            className={styles.backButton}
+                            onClick={handleBackToHome}
+                        >
+                            ← BACK TO HOME
+                        </button>
+                    </div>
+                )}
+
+                {currentView === "resume" && (
+                    <div className={styles.questView}>
+                        <h1 className={styles.questHeader}>{questData?.title}</h1>
+                        <p style={{color: "#ffffff", fontSize: "1.5rem"}}>
+                            Resume review quest content will go here...
+                        </p>
+                        <button
+                            className={styles.backButton}
+                            onClick={handleBackToHome}
+                        >
+                            ← BACK TO HOME
+                        </button>
+                    </div>
+                )}
+            </main>}
+
+            {isStarted && <Footer/>}
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }
