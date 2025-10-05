@@ -5,7 +5,10 @@ import { useConversation } from '@elevenlabs/react';
 import styles from './Interview.module.css';
 import Image from 'next/image';
 
-export default function Interview() {
+export default function Interview(props) {
+const  {
+    setCurrentView,
+} = props;
   const [micMuted, setMicMuted] = useState(false);
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -144,13 +147,11 @@ export default function Interview() {
   };
 
   const handleBackToMenu = () => {
-    // Navigate back to main menu
-    
+    setCurrentView("home");
   };
 
   const handleViewResults = () => {
     // Navigate to results page
-   
   };
 
   return (

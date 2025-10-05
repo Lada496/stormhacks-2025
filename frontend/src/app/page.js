@@ -136,7 +136,7 @@ export default function Home() {
 
           {currentView === "interview" && (
             <div className={styles.questView}>
-              <Interview />
+              <Interview setCurrentView={setCurrentView}/>
             </div>
           )}
 

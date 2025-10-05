@@ -1,193 +1,241 @@
-// Set up PDF.js worker (only in browser)
-let pdfjsLib = null;
-let mammoth = null;
+import * as pdfjsLib from 'pdfjs-dist';
+import mammoth from 'mammoth';
 
-// Dynamic imports to avoid SSR issues
-const initializeLibraries = async () => {
-  if (typeof window === 'undefined') {
-    throw new Error('This parser only works in the browser');
+// Set up PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+export const parseResume = async (file) => {
+  try {
+    if (!file) {
+      throw new Error('No file provided');
+    }
+
+    const fileType = file.type;
+    const fileName = file.name.toLowerCase();
+
+    console.log('Parsing file:', fileName, 'Type:', fileType);
+
+    if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+      return await parsePDF(file);
+    } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileName.endsWith('.docx')) {
+      return await parseDOCX(file);
+    } else {
+      throw new Error(`Unsupported file type: ${fileType}. Please upload a PDF or DOCX file.`);
+    }
+  } catch (error) {
+    console.error('Resume parsing error:', error);
+    throw new Error(`Failed to parse resume: ${error.message}`);
   }
-  
-  if (!pdfjsLib) {
-    pdfjsLib = await import('pdfjs-dist');
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-  }
-  
-  if (!mammoth) {
-    mammoth = await import('mammoth');
-  }
-  
-  return { pdfjsLib, mammoth };
 };
 
-/**
- * Parse PDF file and extract text content
- * @param {File} file - PDF file object
- * @returns {Promise<string>} - Extracted text content
- */
-async function parsePDF(file) {
+const parsePDF = async (file) => {
+  console.log('Starting PDF parsing...');
+  
   try {
-    await initializeLibraries(); // Initialize libraries first
     const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    console.log('File converted to ArrayBuffer, size:', arrayBuffer.byteLength);
+    
+    // Configure PDF.js options for better compatibility
+    const loadingTask = pdfjsLib.getDocument({
+      data: arrayBuffer,
+      useSystemFonts: true,
+      verbosity: 0, // Reduce console noise
+      cMapPacked: true,
+      standardFontDataUrl: `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/standard_fonts/`,
+      cMapUrl: `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/cmaps/`
+    });
+    
+    const pdf = await loadingTask.promise;
+    console.log('PDF loaded successfully, pages:', pdf.numPages);
     
     let fullText = '';
-    
-    // Extract text from each page
+    const extractedPages = [];
+    const metadata = {
+      pageCount: pdf.numPages,
+      title: '',
+      author: '',
+      subject: '',
+      creator: '',
+      producer: '',
+      creationDate: null,
+      modificationDate: null
+    };
+
+    // Extract metadata with better error handling
+    try {
+      const pdfMetadata = await pdf.getMetadata();
+      if (pdfMetadata?.info) {
+        metadata.title = pdfMetadata.info.Title || '';
+        metadata.author = pdfMetadata.info.Author || '';
+        metadata.subject = pdfMetadata.info.Subject || '';
+        metadata.creator = pdfMetadata.info.Creator || '';
+        metadata.producer = pdfMetadata.info.Producer || '';
+        metadata.creationDate = pdfMetadata.info.CreationDate || null;
+        metadata.modificationDate = pdfMetadata.info.ModDate || null;
+      }
+      console.log('PDF metadata extracted:', metadata);
+    } catch (metaError) {
+      console.warn('Could not extract PDF metadata:', metaError.message);
+    }
+
+    // Extract text from all pages with improved text extraction
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      const page = await pdf.getPage(pageNum);
-      const textContent = await page.getTextContent();
-      
-      // Combine text items with proper spacing
-      const pageText = textContent.items
-        .map(item => item.str)
-        .join(' ')
-        .replace(/\s+/g, ' ') // Normalize whitespace
-        .trim();
-      
-      fullText += pageText + '\n\n';
-    }
-    
-    return fullText.trim();
-  } catch (error) {
-    console.error('Error parsing PDF:', error);
-    throw new Error('Failed to parse PDF file. Please ensure it\'s a valid PDF.');
-  }
-}
-
-/**
- * Parse DOCX file and extract text content
- * @param {File} file - DOCX file object
- * @returns {Promise<string>} - Extracted text content
- */
-async function parseDOCX(file) {
-  try {
-    await initializeLibraries(); // Initialize libraries first
-    const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    
-    if (result.messages && result.messages.length > 0) {
-      console.warn('DOCX parsing warnings:', result.messages);
-    }
-    
-    return result.value.trim();
-  } catch (error) {
-    console.error('Error parsing DOCX:', error);
-    throw new Error('Failed to parse DOCX file. Please ensure it\'s a valid Word document.');
-  }
-}
-
-/**
- * Clean and format extracted text
- * @param {string} text - Raw extracted text
- * @returns {string} - Cleaned and formatted text
- */
-function cleanText(text) {
-  return text
-    // Remove excessive whitespace
-    .replace(/\s+/g, ' ')
-    // Remove multiple newlines
-    .replace(/\n\s*\n\s*\n/g, '\n\n')
-    // Clean up common PDF artifacts
-    .replace(/[^\x20-\x7E\n]/g, '') // Remove non-printable characters
-    // Trim
-    .trim();
-}
-
-/**
- * Parse resume file (PDF or DOCX) and extract text content
- * @param {File} file - Resume file object
- * @returns {Promise<{text: string, metadata: object}>} - Parsed content and metadata
- */
-export async function parseResume(file) {
-  if (!file) {
-    throw new Error('No file provided');
-  }
-
-  // Validate file type
-  const validTypes = [
-    'application/pdf',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-  ];
-  
-  if (!validTypes.includes(file.type)) {
-    throw new Error('Unsupported file type. Please upload a PDF or DOCX file.');
-  }
-
-  // Validate file size (max 10MB)
-  const maxSize = 10 * 1024 * 1024; // 10MB
-  if (file.size > maxSize) {
-    throw new Error('File too large. Please upload a file smaller than 10MB.');
-  }
-
-  try {
-    let rawText = '';
-    
-    if (file.type === 'application/pdf') {
-      rawText = await parsePDF(file);
-    } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-      rawText = await parseDOCX(file);
+      try {
+        console.log(`Processing page ${pageNum}/${pdf.numPages}...`);
+        const page = await pdf.getPage(pageNum);
+        
+        // Get text content with better options
+        const textContent = await page.getTextContent({
+          includeMarkedContent: true,
+          disableNormalization: false
+        });
+        
+        // Process text items with better spacing and formatting
+        let pageText = '';
+        let lastY = null;
+        let lastX = null;
+        
+        for (const item of textContent.items) {
+          if (item.str.trim()) {
+            // Add line breaks for significant Y position changes (new lines)
+            if (lastY !== null && Math.abs(lastY - item.transform[5]) > 5) {
+              pageText += '\n';
+            }
+            // Add spaces for significant X position changes (word spacing)
+            else if (lastX !== null && (item.transform[4] - lastX) > 10) {
+              pageText += ' ';
+            }
+            
+            pageText += item.str;
+            lastY = item.transform[5];
+            lastX = item.transform[4] + item.width;
+          }
+        }
+        
+        if (pageText.trim()) {
+          fullText += pageText.trim() + '\n\n';
+          extractedPages.push({
+            pageNumber: pageNum,
+            text: pageText.trim(),
+            characterCount: pageText.trim().length
+          });
+        }
+        
+        console.log(`Page ${pageNum} extracted: ${pageText.trim().length} characters`);
+        
+        // Clean up page resources
+        page.cleanup();
+        
+      } catch (pageError) {
+        console.warn(`Error extracting text from page ${pageNum}:`, pageError.message);
+        // Continue with other pages even if one fails
+      }
     }
 
-    const cleanedText = cleanText(rawText);
+    // Clean up PDF document
+    pdf.cleanup();
+
+    const cleanedText = cleanText(fullText);
     
-    if (!cleanedText || cleanedText.length < 50) {
-      throw new Error('Unable to extract meaningful text from the file. Please check if the file contains readable text.');
+    if (!cleanedText || cleanedText.length < 10) {
+      throw new Error(
+        'No readable text found in PDF. This might be because:\n' +
+        '• The PDF contains only images or scanned content\n' +
+        '• The PDF is password protected\n' +
+        '• The PDF file is corrupted\n' +
+        'Please try using the "Paste Text Instead" option as a fallback.'
+      );
     }
 
+    console.log('PDF parsing completed successfully:', cleanedText.length, 'characters');
+    
     return {
       text: cleanedText,
       metadata: {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
-        wordCount: cleanedText.split(/\s+/).length,
-        extractedAt: new Date().toISOString()
-      }
+        ...metadata,
+        extractedPages: extractedPages.length,
+        totalCharacters: cleanedText.length,
+        pageDetails: extractedPages
+      },
+      wordCount: cleanedText.split(/\s+/).filter(word => word.length > 0).length,
+      extractedPages: extractedPages.length
     };
+    
   } catch (error) {
-    console.error('Resume parsing error:', error);
-    throw error;
-  }
-}
-
-/**
- * Extract key sections from resume text
- * @param {string} text - Resume text
- * @returns {object} - Structured resume data
- */
-export function extractResumeSections(text) {
-  const sections = {
-    contact: '',
-    summary: '',
-    experience: '',
-    education: '',
-    skills: '',
-    other: ''
-  };
-
-  // Simple section detection based on common headers
-  const sectionPatterns = {
-    contact: /^.*?(?=(?:summary|objective|experience|education|skills)|$)/is,
-    summary: /(?:summary|objective|profile)[\s\S]*?(?=(?:experience|education|skills|employment)|$)/i,
-    experience: /(?:experience|employment|work history|professional experience)[\s\S]*?(?=(?:education|skills|projects)|$)/i,
-    education: /(?:education|academic background|qualifications)[\s\S]*?(?=(?:skills|projects|certifications)|$)/i,
-    skills: /(?:skills|technical skills|competencies|technologies)[\s\S]*?(?=(?:projects|certifications|references)|$)/i
-  };
-
-  for (const [section, pattern] of Object.entries(sectionPatterns)) {
-    const match = text.match(pattern);
-    if (match) {
-      sections[section] = match[0].trim();
+    console.error('PDF parsing error:', error);
+    
+    // Provide more helpful error messages
+    let errorMessage = 'PDF parsing failed';
+    if (error.message.includes('Invalid PDF')) {
+      errorMessage = 'Invalid PDF file. Please ensure the file is not corrupted.';
+    } else if (error.message.includes('Password')) {
+      errorMessage = 'PDF is password protected. Please remove password protection and try again.';
+    } else if (error.message.includes('Network')) {
+      errorMessage = 'Network error while loading PDF resources. Please check your connection.';
+    } else {
+      errorMessage = `PDF parsing failed: ${error.message}`;
     }
+    
+    throw new Error(errorMessage);
   }
+};
 
-  // If no sections found, put everything in 'other'
-  if (Object.values(sections).every(section => !section)) {
-    sections.other = text;
+const parseDOCX = async (file) => {
+  try {
+    console.log('Starting DOCX parsing...');
+    const arrayBuffer = await file.arrayBuffer();
+    
+    const result = await mammoth.extractRawText({ 
+      arrayBuffer,
+      // Add options for better text extraction
+      includeEmbeddedStyleMap: true,
+      includeDefaultStyleMap: true
+    });
+    
+    const cleanedText = cleanText(result.value);
+    
+    if (!cleanedText || cleanedText.length < 10) {
+      throw new Error(
+        'No readable text found in DOCX file. The document might be empty or contain only images.'
+      );
+    }
+
+    console.log('DOCX parsing completed successfully:', cleanedText.length, 'characters');
+    
+    return {
+      text: cleanedText,
+      metadata: {
+        wordCount: cleanedText.split(/\s+/).filter(word => word.length > 0).length,
+        messages: result.messages || [],
+        totalCharacters: cleanedText.length
+      },
+      wordCount: cleanedText.split(/\s+/).filter(word => word.length > 0).length
+    };
+    
+  } catch (error) {
+    console.error('DOCX parsing error:', error);
+    throw new Error(`DOCX parsing failed: ${error.message}`);
   }
+};
 
-  return sections;
-}
-
-export default { parseResume, extractResumeSections };
+const cleanText = (text) => {
+  if (!text) return '';
+  
+  return text
+    // Normalize line breaks
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    // Remove excessive whitespace but preserve structure
+    .replace(/[ \t]+/g, ' ')  // Multiple spaces/tabs to single space
+    .replace(/\n\s*\n\s*\n/g, '\n\n')  // Multiple line breaks to double
+    // Clean up common PDF artifacts
+    .replace(/\u00A0/g, ' ')  // Non-breaking spaces
+    .replace(/\u2022/g, '•')  // Bullet points
+    .replace(/\u2013/g, '–')  // En dash
+    .replace(/\u2014/g, '—')  // Em dash
+    .replace(/\u201C/g, '"')  // Left double quote
+    .replace(/\u201D/g, '"')  // Right double quote
+    .replace(/\u2018/g, "'")  // Left single quote
+    .replace(/\u2019/g, "'")  // Right single quote
+    .trim();
+};
