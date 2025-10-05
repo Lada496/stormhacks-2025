@@ -131,6 +131,37 @@
     0 -2px 0 rgba(0, 0, 0, 0.8);
 }
 
+.progress {
+    font-family: var(--font-silkscreen);
+    font-size: var(--date-size, 1.25rem);
+    font-weight: 400;
+    color: #9D4EDD;
+    margin: 0;
+    text-shadow: 2px 0 0 rgba(0, 0, 0, 0.8),
+    0 2px 0 rgba(0, 0, 0, 0.8),
+    -2px 0 0 rgba(0, 0, 0, 0.8),
+    0 -2px 0 rgba(0, 0, 0, 0.8);
+}
+
+/* Locked state */
+.locked {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
+
+.locked .icon {
+    animation: none;
+    opacity: 0.5;
+}
+
+.locked .title {
+    color: #888;
+}
+
+.locked .description {
+    color: #666;
+}
+
 .badgeContainer {
     width: var(--badge-size, 44px);
     height: var(--badge-size, 44px);

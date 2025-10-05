@@ -26,6 +26,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Prevent scrollbar when on section-based home view */
+body.no-scroll {
+  overflow: hidden;
+  height: 100vh;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

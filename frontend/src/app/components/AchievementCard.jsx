@@ -8,9 +8,17 @@ export default function AchievementCard({
   title,
   description,
   unlockedDate,
+  achieved = true, // boolean - whether achievement is unlocked
+  progress = null, // string like "3/10" or object like { current: 3, required: 10 }
   size = "medium", // small, medium, large
   customConfig = null,
 }) {
+  // Format progress if it's an object
+  const progressText = progress
+    ? typeof progress === 'string'
+      ? progress
+      : `${progress.current}/${progress.required}`
+    : null;
   // Size presets
   const sizePresets = {
     small: {
@@ -59,7 +67,7 @@ export default function AchievementCard({
   };
 
   return (
-    <div className={styles.card} style={cardStyle}>
+    <div className={`${styles.card} ${!achieved ? styles.locked : ''}`} style={cardStyle}>
       <Image
         src="/assets/achievements_svg_pack/cards/achievement-card.svg"
         alt=""
@@ -82,7 +90,13 @@ export default function AchievementCard({
           <div className={styles.textContent}>
             <h3 className={styles.title}>{title}</h3>
             <p className={styles.description}>{description}</p>
-            <p className={styles.date}>Unlocked: {unlockedDate}</p>
+            {achieved ? (
+              <p className={styles.date}>Unlocked: {unlockedDate}</p>
+            ) : (
+              <p className={styles.progress}>
+                {progressText ? `Progress: ${progressText}` : 'Locked'}
+              </p>
+            )}
           </div>
         </div>
 
