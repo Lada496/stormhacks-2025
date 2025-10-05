@@ -17,6 +17,7 @@ export default function Home() {
       });
       const data = await res.json();
       setResponse(data.response || data.error);
+      console.log({ data });
     } catch (err) {
       setResponse("Error calling agent");
     } finally {
@@ -42,7 +43,10 @@ export default function Home() {
         onChange={(e) => setJobDescription(e.target.value)}
       />
 
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={callAgent}>
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+        onClick={callAgent}
+      >
         {loading ? "Loading..." : "Evaluate"}
       </button>
 
