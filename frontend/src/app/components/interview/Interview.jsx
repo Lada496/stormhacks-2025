@@ -347,7 +347,7 @@ const  {
           </button>
 
           {/* Navigation buttons */}
-          <div className={styles.navigationButtons}>
+        
             <button 
               className={styles.actionButton}
               onClick={handleBackToMenu}
@@ -360,21 +360,6 @@ const  {
               />
               <span className={styles.buttonText}>BACK TO MENU</span>
             </button>
-
-            <button 
-              className={styles.actionButton}
-              onClick={handleViewResults}
-              disabled={conversation.status === 'connected' || conversation.status === 'connecting'}
-            >
-              <Image
-                src="/assets/buttons/button-purple.svg"
-                alt=""
-                fill
-                className={styles.buttonBackground}
-              />
-              <span className={styles.buttonText}>VIEW RESULTS</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

@@ -459,11 +459,6 @@
         gap: 1rem;
     }
     
-    .navigationButtons {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
     .actionButton {
         height: 50px;
     }
