@@ -23,6 +23,32 @@ function printNestedObjects(obj, indent = 0) {
   }
 }
 
+function parseEvaluation(completionText = "") {
+  if (typeof completionText !== "string") {
+    throw new Error("Expected completionText to be a string");
+  }
+
+  const overallMatch = completionText.match(
+    /\boverall\s*score\b\s*[:\-]?\s*(\d+)/i
+  );
+  const keywordMatch = completionText.match(
+    /\bkeyword\s*score\b\s*[:\-]?\s*(\d+)/i
+  );
+  const qualityMatch = completionText.match(
+    /\bcontent\s*quality\s*score\b\s*[:\-]?\s*(\d+)/i
+  );
+  const feedbackMatch = completionText.match(
+    /\bfeedback\b\s*[:\-]?\s*([\s\S]+)/i
+  );
+
+  return {
+    overallScore: overallMatch ? parseInt(overallMatch[1], 10) : null,
+    keywordScore: keywordMatch ? parseInt(keywordMatch[1], 10) : null,
+    contentQualityScore: qualityMatch ? parseInt(qualityMatch[1], 10) : null,
+    feedback: feedbackMatch ? feedbackMatch[1].trim() : null,
+  };
+}
+
 const bedrockClient = new BedrockAgentRuntimeClient({
   region: "us-east-1",
   credentials: {
@@ -44,7 +70,7 @@ export async function POST(request) {
     }
 
     // 3. Combine inputs into a prompt
-    const prompt = `Resume:\n${resume}\n\nJob Description:\n${jobDescription}\n\nProvide an evaluation of the candidate's fit for this role. Template must be Score: <number>\n Feedback: <feedback>`;
+    const prompt = `Resume:\n${resume}\n\nJob Description:\n${jobDescription}\n\nProvide an evaluation of the candidate's fit for this role. Template must be overallScore: <integer>\n keyword Score: <integer>\n contentQualityScore: <integer>\n feedback: <feedback>`;
 
     const command = new InvokeAgentCommand({
       agentId: "J1MWWVMZM9", // replace with your agent/model ID
@@ -61,23 +87,13 @@ export async function POST(request) {
     let completion = "";
     for await (const chunkEvent of response.completion) {
       const chunk = chunkEvent.chunk;
-      console.log(chunk);
       const decodedResponse = new TextDecoder("utf-8").decode(chunk.bytes);
       completion += decodedResponse;
     }
 
-    // Extract score and feedback (case-insensitive)
-    const scoreMatch = completion.match(/score:\s*(\d+)/i);
-    const feedbackMatch = completion.match(/feedback:\s*([\s\S]+)/i);
+    console.log(parseEvaluation(completion));
 
-    const nextResponse = {
-      score: scoreMatch ? parseInt(scoreMatch[1]) : null,
-      feedback: feedbackMatch ? feedbackMatch[1].trim() : null,
-    };
-
-    console.log({ nextResponse });
-
-    return NextResponse.json(nextResponse);
+    return NextResponse.json(parseEvaluation(completion));
   } catch (error) {
     console.error(error);
     return NextResponse.json(

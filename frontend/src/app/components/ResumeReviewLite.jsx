@@ -1,96 +1,76 @@
 "use client";
-import { useState } from "react";
-import RRLCSS from './ResumeReviewLiteCSS.css'
+import { useState, useEffect } from "react";
+import ResultView from "./ResultView";
+import styles from "./ResumeReviewLite.module.css";
 
-const ResumeReviewLite = () => {
+const ResumeReviewLite = ({ setUserStats }) => {
+  const [resume, setResume] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [show, setShow] = useState(false);
 
-    const [resume, setResume] = useState("");
-    const [jobDescription, setJobDescription] = useState("");
-    const [response, setResponse] = useState("");
-    const [loading, setLoading] = useState(false);
+  const callAgent = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch("/api/call-resume-analyzer-agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resume, jobDescription }),
+      });
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      const data = await res.json();
+      console.log({ data });
+      setResponse(data);
+      setUserStats((prev) => ({
+        ...prev,
+        xp: data.overallScore || 0,
+      }));
+      setShow(true);
+    } catch (err) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const callAgent = async () => {
-        setLoading(true);
-        try {
-          const res = await fetch("/api/call-resume-analyzer-agent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ resume, jobDescription }),
-          });
-          const data = await res.json();
-          setResponse(data.response || data.error);
-          console.log({ data });
-        } catch (err) {
-          setResponse("Error calling agent");
-        } finally {
-          setLoading(false);
-        }
-    };
-  
-    return(
-        <div style={styles.container}>
-            <h3 style={styles.subHeader}>Upload your resume for AI-powered feedback!</h3>
-            <form style={styles.submitForm} onSubmit={(e) => callAgent}>
-                <textarea style={styles.textarea}
-                    placeholder="Paste your resume here..."
-                    value={resume}
-                    onChange={(e) => setResume(e.target.value)}
-                ></textarea>
-                <textarea style={styles.textarea}
-                    placeholder="Paste the job description here..."
-                    value={jobDescription}
-                    onChange={(e) => setJobDescription(e.target.value)}
-                />
-                <button className="btn" type="submit">
-                    Submit!
-                </button>
-            </form>
+  return (
+    <>
+      {error && <p>Something went wrong!</p>}
+      {show && !loading ? (
+        <ResultView response={response} />
+      ) : (
+        <div className={styles.container}>
+          <h3 className={styles.subHeader}>
+            Upload your resume for AI-powered feedback!
+          </h3>
+          <form className={styles.submitForm} onSubmit={callAgent}>
+            <textarea
+              className={styles.textarea}
+              placeholder="Paste your resume here..."
+              value={resume}
+              onChange={(e) => setResume(e.target.value)}
+            ></textarea>
+            <textarea
+              className={styles.textarea}
+              placeholder="Paste the job description here..."
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+            />
+            <button
+              className={styles.btn}
+              type="submit"
+              disabled={!jobDescription || !resume}
+            >
+              {loading ? "Loading..." : "Submit!"}
+            </button>
+          </form>
         </div>
-    )
-}
-
-const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '50vh', // Centralize vertically
-        padding: '50px',
-        backgroundColor: '#1a1a2e',
-        borderRadius: '15px', // Rounded border
-        border: '5px solid rgb(73, 181, 221)',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add a subtle shadow
-        width: '100%', // Responsive width
-        maxWidth: '800px', // Limit the maximum width
-        margin: '0 auto', // Center horizontally
-    },
-    subHeader: {
-        fontSize: '3rem',
-        textAlign: 'center',
-        margin: '10px',
-        padding: '15px',
-        color: '#ffffff',
-    },
-    textarea: {
-        width: '100%',
-        height: '200px', // Make the input forms bigger
-        padding: '15px',
-        margin: '20px',
-        fontSize: '1.2rem',
-        borderRadius: '10px',
-        border: '5px solid #cccccc',
-        backgroundColor: '#1e1e1e',
-        color: '#ffffff',
-        marginBottom: '15px', // Add spacing between inputs
-    },
-    submitForm: {
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',   
-    },
-}
+      )}
+    </>
+  );
+};
 
 export default ResumeReviewLite;
-
