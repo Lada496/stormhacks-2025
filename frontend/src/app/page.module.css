@@ -26,6 +26,8 @@
   align-items: center;
   width: 100%;
   padding: 4rem 2rem;
+  background-color: #1a1a2e;
+  flex-grow: 1;
 }
 
 .questHeader {
@@ -53,6 +55,20 @@
   flex-wrap: wrap;
   width: 100%;
   max-width: 1200px;
+}
+
+.achievementsContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+@media (max-width: 900px) {
+  .achievementsContainer {
+    grid-template-columns: 1fr;
+  }
 }
 
 .main code {
