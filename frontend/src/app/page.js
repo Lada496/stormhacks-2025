@@ -8,6 +8,7 @@ import AchievementCard from "./components/AchievementCard";
 import Footer from "./components/Footer";
 import PersonalStats from "@/app/components/PersonalStats";
 import Interview from "./components/interview/Interview";
+import ResumeReviewLite from './components/ResumeReviewLite';
 
 export default function Home() {
     const [currentView, setCurrentView] = useState("home");
@@ -128,7 +129,7 @@ export default function Home() {
                         <div className={styles.questView}>
                             <h1 className={styles.questHeader}>{questData?.title}</h1>
                             <p style={{color: "#ffffff", fontSize: "1.5rem"}}>
-                                Resume review quest content will go here...
+                                <ResumeReviewLite></ResumeReviewLite>
                             </p>
                             <button className={styles.backButton} onClick={handleBackToHome}>
                                 ← BACK TO HOME
