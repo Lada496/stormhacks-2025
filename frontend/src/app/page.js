@@ -8,8 +8,7 @@ import AchievementCard from "./components/AchievementCard";
 import Footer from "./components/Footer";
 import PersonalStats from "@/app/components/PersonalStats";
 import Interview from "./components/interview/Interview";
-
-import ResultView from "./components/ResultView";
+import ResumeReviewLite from './components/ResumeReviewLite';
 
 export default function Home() {
   const [currentView, setCurrentView] = useState("home");
@@ -45,13 +44,12 @@ export default function Home() {
         contextText={getContextText()}
       />
 
-      {isStarted && (
-        <main className={styles.main}>
-          {currentView === "home" && (
-            <>
-              <PersonalStats />
-              <PersonalStats />
-              <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
+            {isStarted && (
+                <main className={styles.main}>
+                    {currentView === "home" && (
+                        <>
+                            <PersonalStats/>
+            <h1 className={styles.questHeader}>CHOOSE YOUR QUEST</h1>
 
               <div className={styles.cardsContainer}>
                 <GameModeCard
@@ -126,23 +124,19 @@ export default function Home() {
             </div>
           )}
 
-          {currentView === "resume" && (
-            <div className={styles.questView}>
-              <h1 className={styles.questHeader}>{questData?.title}</h1>
-              <p style={{ color: "#ffffff", fontSize: "1.5rem" }}>
-                Resume review quest content will go here...
-              </p>
-              <button className={styles.backButton} onClick={handleBackToHome}>
-                ← BACK TO HOME
-              </button>
-            </div>
-          )}
-          <ResultView
-            score={95}
-            feedback="hahahahahhahahahahhahahahahahahahahahahahah"
-          />
-        </main>
-      )}
+                    {currentView === "resume" && (
+                        <div className={styles.questView}>
+                            <h1 className={styles.questHeader}>{questData?.title}</h1>
+                            <p style={{color: "#ffffff", fontSize: "1.5rem"}}>
+                                <ResumeReviewLite></ResumeReviewLite>
+                            </p>
+                            <button className={styles.backButton} onClick={handleBackToHome}>
+                                ← BACK TO HOME
+                            </button>
+                        </div>
+                    )}
+                </main>
+            )}
 
       {isStarted && <Footer />}
     </div>
