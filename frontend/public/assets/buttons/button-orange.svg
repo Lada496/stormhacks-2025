@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="120" viewBox="0 0 760 120" role="img">
+  <g>
+    <rect x="0" y="0" width="760" height="120" rx="14" ry="14" fill="#F29B3D" stroke="rgba(0,0,0,0.6)" stroke-width="3"/>
+    <!-- Retro corner tabs -->
+    <rect x="8" y="98" width="12" height="12" fill="#F29B3D"/>
+    <rect x="740" y="98" width="12" height="12" fill="#F29B3D"/>
+  </g>
+</svg>
