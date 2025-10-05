@@ -1,0 +1,29 @@
+{
+  "name": "stormhacks-2025-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Eleven Labs agent integration",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.17.0",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "elevenlabs": "^0.8.2",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "elevenlabs",
+    "ai",
+    "voice",
+    "agent"
+  ],
+  "author": "",
+  "license": "ISC"
+}
