@@ -130,6 +130,7 @@
 }
 
 .startButton {
+    font-family: var(--font-silkscreen);
     width: 100%;
     height: var(--button-height, 120px);
     position: relative;
