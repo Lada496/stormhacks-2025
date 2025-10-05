@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import GameModeCard from "./components/gameModeCard";
 import AchievementCard from "./components/AchievementCard";
 import Footer from "./components/Footer";
+import PersonalStats from "@/app/components/PersonalStats";
 
 export default function Home() {
     const [currentView, setCurrentView] = useState("home"); // home, interview, resume
